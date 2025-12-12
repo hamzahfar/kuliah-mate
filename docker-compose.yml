@@ -29,16 +29,15 @@ services:
     environment:
       - MONGO_URL=mongodb://mongo:27017/task_db
 
-  # SERVICE BARU: FRONTEND
+  # SERVICE: FRONTEND
   frontend:
     build: ./frontend
     container_name: kuliah-mate-frontend
     ports:
-      - "3001:3000"
+      - "5173:3000"
     depends_on:
       - schedule-service
       - task-service
-    # Mapping volume agar bisa edit code live tanpa restart container (opsional)
     volumes:
       - ./frontend/src:/app/src 
 

@@ -8,7 +8,7 @@ function App() {
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>🎓 Kuliah Mate</h1>
-      <p>Sistem Manajemen Kuliah Terintegrasi (Microservices)</p>
+      <p>Sistem Manajemen Kuliah Terintegrasi</p>
       
       <div style={{ marginBottom: '20px' }}>
         <button onClick={() => setView('jadwal')} style={{ marginRight: '10px', padding: '10px' }}>
