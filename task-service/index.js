@@ -1,7 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server');
 const mongoose = require('mongoose');
 
-// Koneksi ke Database (DB berbeda sesuai syarat [cite: 19])
+// Koneksi ke Database (DB berbeda sesuai syarat)
 mongoose.connect('mongodb://mongo:27017/task_db', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Schema GraphQL
@@ -17,6 +17,7 @@ const typeDefs = gql`
   }
   type Mutation {
     addTask(title: String!, deadline: String!, courseName: String!): Task
+    deleteTask(id: ID!): String
   }
 `;
 
@@ -32,12 +33,16 @@ const resolvers = {
       await task.save();
       return task;
     },
+    // TAMBAHAN: Resolver Delete
+    deleteTask: async (_, { id }) => {
+      await Task.findByIdAndDelete(id);
+      return "Tugas berhasil dihapus";
+    },
   },
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-// Berjalan di port berbeda
 server.listen({ port: 4002 }).then(({ url }) => {
   console.log(`🚀 Task Service ready at ${url}`);
 });

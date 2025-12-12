@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // Koneksi ke Database (MongoDB)
 mongoose.connect('mongodb://mongo:27017/schedule_db', { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Schema GraphQL [cite: 29]
+// Schema GraphQL
 const typeDefs = gql`
   type Course {
     id: ID!
@@ -17,6 +17,7 @@ const typeDefs = gql`
   }
   type Mutation {
     addCourse(name: String!, day: String!, time: String!): Course
+    deleteCourse(id: ID!): String
   }
 `;
 
@@ -33,6 +34,11 @@ const resolvers = {
       const course = new Course({ name, day, time });
       await course.save();
       return course;
+    },
+    // TAMBAHAN: Resolver Delete
+    deleteCourse: async (_, { id }) => {
+      await Course.findByIdAndDelete(id);
+      return "Jadwal berhasil dihapus";
     },
   },
 };

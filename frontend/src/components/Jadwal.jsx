@@ -1,9 +1,9 @@
 import React from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, useMutation, gql } from '@apollo/client';
 
-// 1. Setup Client Khusus untuk Schedule Service
+// 1. Setup Client
 const client = new ApolloClient({
-  uri: 'http://localhost:4001/graphql', // URL Backend Schedule
+  uri: 'http://localhost:4001/graphql',
   cache: new InMemoryCache(),
 });
 
@@ -28,10 +28,18 @@ const ADD_COURSE = gql`
   }
 `;
 
+// TAMBAHAN: Definisi Delete Mutation
+const DELETE_COURSE = gql`
+  mutation DeleteCourse($id: ID!) {
+    deleteCourse(id: $id)
+  }
+`;
+
 // 3. Komponen Tampilan
 const JadwalContent = () => {
   const { loading, error, data, refetch } = useQuery(GET_COURSES);
   const [addCourse] = useMutation(ADD_COURSE);
+  const [deleteCourse] = useMutation(DELETE_COURSE); // Hook delete
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,11 +52,19 @@ const JadwalContent = () => {
       }
     });
     e.target.reset();
-    refetch(); // Refresh data setelah input
+    refetch();
+  };
+
+  // Fungsi Handle Delete
+  const handleDelete = async (id) => {
+    if (confirm('Yakin ingin menghapus jadwal ini?')) {
+      await deleteCourse({ variables: { id } });
+      refetch();
+    }
   };
 
   if (loading) return <p>Loading Jadwal...</p>;
-  if (error) return <p>Error: Pastikan Schedule Service (Port 4001) berjalan!</p>;
+  if (error) return <p>Error: Pastikan Schedule Service berjalan!</p>;
 
   return (
     <div>
@@ -60,10 +76,16 @@ const JadwalContent = () => {
         <button type="submit">Tambah Jadwal</button>
       </form>
 
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {data.getCourses.map((c) => (
-          <li key={c.id}>
-            <strong>{c.name}</strong> - {c.day} pukul {c.time}
+          <li key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ddd', padding: '10px' }}>
+            <span><strong>{c.name}</strong> - {c.day} pukul {c.time}</span>
+            <button 
+              onClick={() => handleDelete(c.id)}
+              style={{ background: '#ff4d4f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              Hapus
+            </button>
           </li>
         ))}
       </ul>
@@ -71,7 +93,6 @@ const JadwalContent = () => {
   );
 };
 
-// 4. Bungkus dengan Provider
 export default function Jadwal() {
   return (
     <ApolloProvider client={client}>

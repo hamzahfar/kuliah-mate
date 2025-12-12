@@ -1,9 +1,8 @@
 import React from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, useMutation, gql } from '@apollo/client';
 
-// 1. Setup Client Khusus untuk Task Service
 const client = new ApolloClient({
-  uri: 'http://localhost:4002/graphql', // URL Backend Task
+  uri: 'http://localhost:4002/graphql',
   cache: new InMemoryCache(),
 });
 
@@ -27,9 +26,17 @@ const ADD_TASK = gql`
   }
 `;
 
+// TAMBAHAN: Definisi Delete Mutation
+const DELETE_TASK = gql`
+  mutation DeleteTask($id: ID!) {
+    deleteTask(id: $id)
+  }
+`;
+
 const TugasContent = () => {
   const { loading, error, data, refetch } = useQuery(GET_TASKS);
   const [addTask] = useMutation(ADD_TASK);
+  const [deleteTask] = useMutation(DELETE_TASK); // Hook delete
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,8 +52,16 @@ const TugasContent = () => {
     refetch();
   };
 
+  // Fungsi Handle Delete
+  const handleDelete = async (id) => {
+    if (confirm('Yakin ingin menghapus tugas ini?')) {
+      await deleteTask({ variables: { id } });
+      refetch();
+    }
+  };
+
   if (loading) return <p>Loading Tugas...</p>;
-  if (error) return <p>Error: Pastikan Task Service (Port 4002) berjalan!</p>;
+  if (error) return <p>Error: Pastikan Task Service berjalan!</p>;
 
   return (
     <div>
@@ -58,10 +73,16 @@ const TugasContent = () => {
         <button type="submit">Tambah Tugas</button>
       </form>
 
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {data.getTasks.map((t) => (
-          <li key={t.id}>
-            <strong>{t.title}</strong> ({t.courseName}) - Deadline: {t.deadline}
+          <li key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ddd', padding: '10px' }}>
+            <span><strong>{t.title}</strong> ({t.courseName}) - Deadline: {t.deadline}</span>
+            <button 
+              onClick={() => handleDelete(t.id)}
+              style={{ background: '#ff4d4f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              Hapus
+            </button>
           </li>
         ))}
       </ul>
