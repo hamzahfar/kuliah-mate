@@ -1,0 +1,4 @@
+body { margin: 0; font-family: sans-serif; }
+input { margin: 5px; padding: 5px; }
+button { padding: 5px 10px; cursor: pointer; }
+li { margin: 5px 0; padding: 5px; border-bottom: 1px solid #ddd; }
