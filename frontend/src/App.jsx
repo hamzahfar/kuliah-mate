@@ -12,49 +12,31 @@ function App() {
     if (savedUser) setUser(savedUser);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-  };
-
-  if (!user) {
-    return <Auth onLogin={(name) => setUser(name)} />;
-  }
+  if (!user) return <Auth onLogin={setUser} />;
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>🎓 Kuliah Mate</h1>
-        <div style={{ textAlign: 'right' }}>
-          <span>Halo, <strong>{user}</strong>!</span><br />
-          <button 
-            onClick={handleLogout} 
-            style={{ background: '#ff4d4f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', marginTop: '5px' }}
-          >
-            Logout
-          </button>
+    <div className="app-container">
+      <nav className="header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '28px' }}>🎓</span>
+          <h1 style={{ margin: 0, fontSize: '22px', fontWeight: '800', letterSpacing: '-0.5px' }}>KuliahMate</h1>
         </div>
-      </div>
-      
-      <div style={{ margin: '20px 0' }}>
-        <button 
-          onClick={() => setView('jadwal')} 
-          style={{ marginRight: '10px', padding: '10px 20px', background: view === 'jadwal' ? '#1890ff' : '#f0f0f0', color: view === 'jadwal' ? 'white' : 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-        >
-          📅 Jadwal
-        </button>
-        <button 
-          onClick={() => setView('tugas')} 
-          style={{ padding: '10px 20px', background: view === 'tugas' ? '#1890ff' : '#f0f0f0', color: view === 'tugas' ? 'white' : 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-        >
-          📝 Tugas
-        </button>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ textAlign: 'right', lineHeight: '1.2' }}>
+            <div style={{ fontSize: '12px', color: '#64748b' }}>Siswa</div>
+            <div style={{ fontWeight: '600' }}>{user}</div>
+          </div>
+          <button onClick={() => { localStorage.clear(); setUser(null); }} className="btn-danger-outline">Logout</button>
+        </div>
+      </nav>
+
+      <div className="tab-group">
+        <button className={`btn-tab ${view === 'jadwal' ? 'active' : ''}`} onClick={() => setView('jadwal')}>📅 Jadwal</button>
+        <button className={`btn-tab ${view === 'tugas' ? 'active' : ''}`} onClick={() => setView('tugas')}>📝 Tugas</button>
       </div>
 
-      <hr />
-
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ paddingBottom: '50px' }}>
         {view === 'jadwal' ? <Jadwal /> : <Tugas />}
       </div>
     </div>

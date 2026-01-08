@@ -39,7 +39,7 @@ const DELETE_COURSE = gql`
 const JadwalContent = () => {
   const { loading, error, data, refetch } = useQuery(GET_COURSES);
   const [addCourse] = useMutation(ADD_COURSE);
-  const [deleteCourse] = useMutation(DELETE_COURSE); // Hook delete
+  const [deleteCourse] = useMutation(DELETE_COURSE);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,40 +55,39 @@ const JadwalContent = () => {
     refetch();
   };
 
-  // Fungsi Handle Delete
   const handleDelete = async (id) => {
-    if (confirm('Yakin ingin menghapus jadwal ini?')) {
+    if (confirm('Hapus jadwal ini?')) {
       await deleteCourse({ variables: { id } });
       refetch();
     }
   };
 
-  if (loading) return <p>Loading Jadwal...</p>;
-  if (error) return <p>Error: Pastikan Schedule Service berjalan!</p>;
+  if (loading) return <div style={{textAlign: 'center', padding: '50px'}}>Memuat Jadwal...</div>;
+  if (error) return <div className="card" style={{color: 'red'}}>Service Bermasalah.</div>;
 
   return (
-    <div>
-      <h2>Jadwal Mata Kuliah</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px', background: '#f0f0f0', padding: '10px' }}>
-        <input name="name" placeholder="Nama Matkul" required />
+    <div className="card">
+      <h3 style={{ marginTop: 0, marginBottom: '24px' }}>📅 Jadwal Kuliah Anda</h3>
+      
+      <form onSubmit={handleSubmit} className="form-grid">
+        <input name="name" placeholder="Mata Kuliah" required />
         <input name="day" placeholder="Hari" required />
         <input name="time" type="time" required />
-        <button type="submit">Tambah Jadwal</button>
+        <button type="submit" className="btn-primary">Tambah</button>
       </form>
 
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <div style={{ marginTop: '20px' }}>
+        {data.getCourses.length === 0 && <p style={{textAlign: 'center', color: '#94a3b8'}}>Belum ada jadwal ditambahkan.</p>}
         {data.getCourses.map((c) => (
-          <li key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ddd', padding: '10px' }}>
-            <span><strong>{c.name}</strong> - {c.day} pukul {c.time}</span>
-            <button 
-              onClick={() => handleDelete(c.id)}
-              style={{ background: '#ff4d4f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-            >
-              Hapus
-            </button>
-          </li>
+          <div key={c.id} className="list-item">
+            <div>
+              <div style={{ fontWeight: '700' }}>{c.name}</div>
+              <div style={{ fontSize: '13px', color: '#64748b' }}>{c.day} • {c.time}</div>
+            </div>
+            <button onClick={() => handleDelete(c.id)} className="btn-danger-outline">Hapus</button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

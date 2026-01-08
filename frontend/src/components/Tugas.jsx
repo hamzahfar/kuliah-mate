@@ -1,11 +1,13 @@
 import React from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, useMutation, gql } from '@apollo/client';
 
+// 1. Setup Client untuk Task Service
 const client = new ApolloClient({
   uri: 'http://localhost:4002/graphql',
   cache: new InMemoryCache(),
 });
 
+// 2. Definisi Query & Mutation
 const GET_TASKS = gql`
   query {
     getTasks {
@@ -26,17 +28,17 @@ const ADD_TASK = gql`
   }
 `;
 
-// TAMBAHAN: Definisi Delete Mutation
 const DELETE_TASK = gql`
   mutation DeleteTask($id: ID!) {
     deleteTask(id: $id)
   }
 `;
 
+// 3. Komponen Tampilan
 const TugasContent = () => {
   const { loading, error, data, refetch } = useQuery(GET_TASKS);
   const [addTask] = useMutation(ADD_TASK);
-  const [deleteTask] = useMutation(DELETE_TASK); // Hook delete
+  const [deleteTask] = useMutation(DELETE_TASK);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,15 +46,14 @@ const TugasContent = () => {
     await addTask({
       variables: {
         title: formData.get('title'),
-        deadline: formData.get('deadline'),
-        courseName: formData.get('courseName')
+        courseName: formData.get('courseName'),
+        deadline: formData.get('deadline')
       }
     });
     e.target.reset();
     refetch();
   };
 
-  // Fungsi Handle Delete
   const handleDelete = async (id) => {
     if (confirm('Yakin ingin menghapus tugas ini?')) {
       await deleteTask({ variables: { id } });
@@ -60,32 +61,43 @@ const TugasContent = () => {
     }
   };
 
-  if (loading) return <p>Loading Tugas...</p>;
-  if (error) return <p>Error: Pastikan Task Service berjalan!</p>;
+  if (loading) return <div style={{textAlign: 'center', padding: '50px'}}>Memuat Daftar Tugas...</div>;
+  if (error) return <div className="card" style={{color: 'red'}}>Task Service bermasalah. Pastikan service berjalan!</div>;
 
   return (
-    <div>
-      <h2>Daftar Tugas</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px', background: '#e6f7ff', padding: '10px' }}>
+    <div className="card">
+      <h3 style={{ marginTop: 0, marginBottom: '24px' }}>📝 Daftar Tugas Anda</h3>
+      
+      {/* Form Input dengan gaya grid yang sama dengan Jadwal */}
+      <form onSubmit={handleSubmit} className="form-grid">
         <input name="title" placeholder="Judul Tugas" required />
-        <input name="courseName" placeholder="Matkul Terkait" required />
+        <input name="courseName" placeholder="Mata Kuliah Terkait" required />
         <input name="deadline" type="date" required />
-        <button type="submit">Tambah Tugas</button>
+        <button type="submit" className="btn-primary">Tambah</button>
       </form>
 
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <div style={{ marginTop: '20px' }}>
+        {data.getTasks.length === 0 && (
+          <p style={{textAlign: 'center', color: '#94a3b8'}}>Belum ada tugas ditambahkan.</p>
+        )}
+        
         {data.getTasks.map((t) => (
-          <li key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ddd', padding: '10px' }}>
-            <span><strong>{t.title}</strong> ({t.courseName}) - Deadline: {t.deadline}</span>
+          <div key={t.id} className="list-item">
+            <div>
+              <div style={{ fontWeight: '700', fontSize: '16px' }}>{t.title}</div>
+              <div style={{ fontSize: '13px', color: '#64748b' }}>
+                <span> {t.courseName}</span> • <span style={{ color: '#e74c3c' }}> Deadline: {t.deadline}</span>
+              </div>
+            </div>
             <button 
-              onClick={() => handleDelete(t.id)}
-              style={{ background: '#ff4d4f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
+              onClick={() => handleDelete(t.id)} 
+              className="btn-danger-outline"
             >
               Hapus
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
