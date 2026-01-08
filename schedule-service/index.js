@@ -1,7 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 const mongoose = require('mongoose');
 
-// Koneksi ke Database (MongoDB)
 mongoose.connect('mongodb://mongo:27017/schedule_db', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Schema GraphQL
@@ -21,7 +20,6 @@ const typeDefs = gql`
   }
 `;
 
-// Model Database
 const Course = mongoose.model('Course', { name: String, day: String, time: String });
 
 // Resolvers
@@ -35,7 +33,6 @@ const resolvers = {
       await course.save();
       return course;
     },
-    // TAMBAHAN: Resolver Delete
     deleteCourse: async (_, { id }) => {
       await Course.findByIdAndDelete(id);
       return "Jadwal berhasil dihapus";
