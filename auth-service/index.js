@@ -32,7 +32,7 @@ const resolvers = {
       const user = new User({ username, password: hashedPassword });
       await user.save();
       const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
-      return { token, user };
+      return { token, user: { id: user.id, username: user.username } };
     },
     login: async (_, { username, password }) => {
       const user = await User.findOne({ username });
@@ -40,7 +40,7 @@ const resolvers = {
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) throw new Error('Password salah');
       const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
-      return { token, user };
+      return { token, user: { id: user.id, username: user.username } };
     }
   }
 };
