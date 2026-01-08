@@ -9,6 +9,14 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "4003:4003"
+    depends_on:
+      - mongo
+
   schedule-service:
     build: ./schedule-service
     container_name: schedule-service
@@ -16,8 +24,6 @@ services:
       - "4001:4001"
     depends_on:
       - mongo
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/schedule_db
 
   task-service:
     build: ./task-service
@@ -26,10 +32,7 @@ services:
       - "4002:4002"
     depends_on:
       - mongo
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/task_db
 
-  # SERVICE: FRONTEND
   frontend:
     build: ./frontend
     container_name: kuliah-mate-frontend
@@ -38,6 +41,7 @@ services:
     depends_on:
       - schedule-service
       - task-service
+      - auth-service
     volumes:
       - ./frontend/src:/app/src 
 
