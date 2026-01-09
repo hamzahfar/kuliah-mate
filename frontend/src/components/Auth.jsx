@@ -8,19 +8,13 @@ const authClient = new ApolloClient({
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      token
-      user { id username }
-    }
+    login(username: $username, password: $password) { token user { id username } }
   }
 `;
 
 const SIGNUP_MUTATION = gql`
   mutation Signup($username: String!, $password: String!) {
-    signup(username: $username, password: $password) {
-      token
-      user { id username }
-    }
+    signup(username: $username, password: $password) { token user { id username } }
   }
 `;
 
@@ -37,36 +31,55 @@ const AuthContent = ({ onLogin }) => {
       const res = isSignup ? data.signup : data.login;
       localStorage.setItem('token', res.token);
       localStorage.setItem('user', res.user.username);
-      localStorage.setItem('userId', res.user.id); // BARIS PENTING
+      localStorage.setItem('userId', res.user.id);
       onLogin(res.user.username);
-    } catch (err) {
-      alert(err.message);
-    }
+    } catch (err) { alert(err.message); }
   };
 
+  const themeColor = isSignup ? '#10b981' : '#38bdf8';
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f8fafc' }}>
-      <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
-        <h2 style={{ textAlign: 'center' }}>{isSignup ? 'Daftar' : 'Login'}</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <input placeholder="Username" onChange={e => setUsername(e.target.value)} required />
-          <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} required />
-          <button type="submit" disabled={loading} className="btn-primary">
-            {loading ? 'Memproses...' : (isSignup ? 'Daftar' : 'Masuk')}
+    <div style={{ 
+      display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', 
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' 
+    }}>
+      <div className="card" style={{ 
+        width: '100%', maxWidth: '420px', textAlign: 'center', 
+        borderTop: `4px solid ${themeColor}` 
+      }}>
+        <div style={{ fontSize: '40px', marginBottom: '10px' }}>{isSignup ? '📝' : '🔐'}</div>
+        <h2 style={{ margin: '0 0 10px 0' }}>{isSignup ? 'Buat Akun Siswa' : 'Masuk KuliahMate'}</h2>
+        <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '30px' }}>
+          {isSignup ? '' : ''}
+        </p>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ textAlign: 'left' }}>
+            <label style={{ fontSize: '12px', color: themeColor, fontWeight: 'bold' }}>USERNAME</label>
+            <input style={{ width: '90%', marginTop: '5px' }} placeholder="Username" onChange={e => setUsername(e.target.value)} required />
+          </div>
+          <div style={{ textAlign: 'left' }}>
+            <label style={{ fontSize: '12px', color: themeColor, fontWeight: 'bold' }}>PASSWORD</label>
+            <input type="password" style={{ width: '90%', marginTop: '5px' }} placeholder="Password" onChange={e => setPassword(e.target.value)} required />
+          </div>
+          <button type="submit" disabled={loading} style={{ background: themeColor, color: '#0f172a', marginTop: '10px' }}>
+            {loading ? 'Memproses...' : (isSignup ? 'Daftar Akun Baru' : 'Masuk Ke Dashboard')}
           </button>
         </form>
-        <button onClick={() => setIsSignup(!isSignup)} style={{ marginTop: '15px', background: 'none', color: '#3498db', textDecoration: 'underline' }}>
-          {isSignup ? 'Sudah punya akun? Login' : 'Belum punya akun? Daftar'}
-        </button>
+
+        <div style={{ marginTop: '25px', paddingTop: '20px', borderTop: '1px solid #334155' }}>
+          <span style={{ color: '#94a3b8', fontSize: '14px' }}>
+            {isSignup ? 'Sudah terdaftar?' : 'Belum punya akun?'}
+          </span>
+          <button onClick={() => setIsSignup(!isSignup)} style={{ background: 'none', color: themeColor, textDecoration: 'underline', padding: '0 0 0 10px' }}>
+            {isSignup ? 'Login di sini' : 'Daftar sekarang'}
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default function Auth({ onLogin }) {
-  return (
-    <ApolloProvider client={authClient}>
-      <AuthContent onLogin={onLogin} />
-    </ApolloProvider>
-  );
+  return <ApolloProvider client={authClient}><AuthContent onLogin={onLogin} /></ApolloProvider>;
 }

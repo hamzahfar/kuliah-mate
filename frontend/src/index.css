@@ -1,114 +1,126 @@
 :root {
-  --primary: #2c3e50;
-  --accent: #3498db;
-  --bg-body: #f8fafc;
-  --card-bg: #ffffff;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
+  --bg-dark: #0f172a; /* Gelap Slate, bukan hitam pekat */
+  --card-dark: #1e293b;
+  --primary: #38bdf8; /* Biru cerah pendidikan */
+  --accent-signup: #10b981; /* Hijau untuk Daftar */
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
   --danger: #ef4444;
-  --border: #e2e8f0;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, sans-serif;
-  background-color: var(--bg-body);
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  background-color: var(--bg-dark);
   color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
-/* Container & Layout */
 .app-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 20px;
 }
 
+/* Card Style */
 .card {
-  background: var(--card-bg);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: var(--card-dark);
+  padding: 32px;
+  border-radius: 20px;
   border: 1px solid var(--border);
-}
-
-/* Header & Nav */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 40px;
-}
-
-.tab-group {
-  display: inline-flex;
-  background: #f1f5f9;
-  padding: 6px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  gap: 4px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
 
 /* Forms */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
-  gap: 12px;
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 24px;
-  border: 1px dashed var(--border);
+  gap: 20px;
+  background: #0f172a;
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  margin-bottom: 30px;
 }
 
 input {
-  padding: 10px 14px;
+  background: #1e293b;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: white;
   font-size: 14px;
-  transition: all 0.2s;
 }
 
 input:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
 
 /* Buttons */
 button {
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 14px;
   cursor: pointer;
   border: none;
-  transition: all 0.2s;
+  transition: 0.2s;
 }
 
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: #2980b9; }
+.btn-primary { background: var(--primary); color: #0f172a; }
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-.btn-tab { background: transparent; color: var(--text-muted); }
-.btn-tab.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.btn-tab {
+  padding: 12px 24px;
+  border-radius: 10px;
+}
+.btn-tab.active { background: var(--primary); color: #0f172a; }
+
+.btn-group {
+  display: flex;
+  gap: 12px; /* Jarak antar tombol (Simpan/Tambah/Batal) */
+}
 
 .btn-danger-outline {
   background: transparent;
   color: var(--danger);
-  border: 1px solid #fee2e2;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.btn-danger-outline:hover { background: #fef2f2; }
+.btn-danger-outline:hover { background: rgba(239, 68, 68, 0.1); }
 
-/* List Items */
+/* List */
 .list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 20px; /* Menambah padding agar isi list tidak sesak */
+  border-bottom: 1px solid var(--border);
+  gap: 15px;
 }
 
-.list-item:last-child { border-bottom: none; }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 0; /* Menambah ruang atas dan bawah */
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 50px; /* Menambah jarak ke konten di bawahnya */
+}
+
+.tab-group {
+  display: inline-flex;
+  background: #1e293b;
+  padding: 8px; /* Lebih tebal */
+  border-radius: 14px;
+  margin-bottom: 40px; /* Jarak ke konten kartu di bawahnya */
+  gap: 12px; /* Jarak antar tombol Jadwal dan Tugas */
+}
+
+.user-nav {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Memberi jarak antara Nama Siswa dan Tombol Logout */
+}
